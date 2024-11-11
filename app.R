@@ -1,4 +1,5 @@
 library(plumber)
+library(swagger)
 
 #* Add two numbers
 #* @param a The first number
@@ -9,12 +10,23 @@ function(a = 0, b = 0) {
   list(result = result)
 }
 
-#* Enable Swagger UI at the /swagger endpoint
+#* Serve the Swagger UI at /swagger
 #* @plumber
 function(pr) {
+  # Set up Swagger JSON specification
   pr %>%
-    pr_set_api_spec('/swagger.json') %>%  # Swagger spec available at /swagger.json
-    pr_set_api_spec("/swagger")  # Swagger UI path
+    pr_set_api_spec("/swagger.json") %>%  # Swagger JSON spec at /swagger.json
+    pr_set_api_spec("/swagger")  # Swagger UI available at /swagger
 }
 
-# Start the API (Plumber automatically serves Swagger UI)
+# Start the Plumber API on port 8000
+pr <- plumber$new()
+
+# Define the /swagger endpoint to serve Swagger UI
+pr$handle("GET", "/swagger", function(req, res) {
+  res$setHeader("Content-Type", "text/html")
+  res$write(swagger::swagger_ui())  # Serve Swagger UI at /swagger
+})
+
+# Run the Plumber API on port 8000
+pr$run(host = "0.0.0.0", port = 8000)
