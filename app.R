@@ -9,11 +9,12 @@ function(a = 0, b = 0) {
   list(result = result)
 }
 
-#* Swagger UI documentation
+#* Enable Swagger UI at the /swagger endpoint
 #* @plumber
 function(pr) {
   pr %>%
-    pr_set_api_spec('/swagger')  # Enable Swagger UI
+    pr_set_api_spec('/swagger.json') %>%  # Swagger spec available at /swagger.json
+    pr_set_api_spec("/swagger")  # Swagger UI path
 }
 
-#* To view Swagger UI in Cloud Run, navigate to /swagger
+# Start the API (Plumber automatically serves Swagger UI)
